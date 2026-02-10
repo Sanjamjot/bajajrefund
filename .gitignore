@@ -1,0 +1,19 @@
+# Environment
+.env
+
+# JSON data files
+refund.json
+refund1.json
+refund2.json
+result.json
+*.json
+
+# Python
+__pycache__/
+*.pyc
+.Python
+
+# Output
+output/
+logs/
+*.log
