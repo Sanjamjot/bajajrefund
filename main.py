@@ -237,7 +237,22 @@ Respond now with ONLY the JSON:"""
             raw_text = response.text.strip()
             print(f"   ✓ Received response ({len(raw_text)} characters)")
             
-            result = self._parse_gemini_response(raw_text)
+            try:
+                result = self._parse_gemini_response(raw_text)
+            except ValueError:
+                # 🔁 ask Gemini to FIX its own JSON
+                repair_prompt = f"""
+You previously returned invalid JSON.
+
+Fix it and return ONLY valid JSON.
+No explanation.
+
+BROKEN RESPONSE:
+{raw_text}
+"""
+                repair_response = self.model.generate_content(repair_prompt)
+                result = self._parse_gemini_response(repair_response.text)
+
             
             result["handled_by"] = "GEMINI_AI_FALLBACK"
             result["refund_eligible"] = result["decision"] == "AUTO_REFUND"
